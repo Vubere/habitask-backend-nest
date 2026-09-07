@@ -11,6 +11,7 @@ export type TaskType = {
   actual_duration: number;
   duration_unit: string;
   user_id: string;
+  priority: string;
 }
 
 export type TaskCreateType = {
@@ -55,4 +56,5 @@ export type TaskQueryType = {
   actual_duration_gte?: number;
   group_by?: string;
   date_group?: string;
+  priority?: string;
 } & TaskType;

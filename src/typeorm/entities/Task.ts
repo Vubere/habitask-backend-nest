@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { User } from "./User";
 import { BaseEntity } from "./BaseEntity";
+import { TaskStep } from "./TaskStep";
 
 
 @Entity({
@@ -31,6 +32,9 @@ export class Task extends BaseEntity {
   @Column({type: 'int', default: 0})
   actual_duration: number;
 
+  @Column('varchar', { length: 50, default: 'low' })
+  priority: string;
+
   @Column({type: 'varchar', length: 50})
   user_id: string;
 
@@ -40,4 +44,7 @@ export class Task extends BaseEntity {
   })
   @JoinColumn({name: 'user_id'})
   user: User;
+  
+  @OneToMany(() => TaskStep, taskStep => taskStep.task)
+  task_steps: TaskStep[];
 }

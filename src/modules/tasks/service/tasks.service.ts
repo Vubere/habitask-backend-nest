@@ -199,6 +199,7 @@ const taskSummaryGroups: Record<string, string> = {
   due_at: 'tasks.due_at',
   name: 'tasks.name',
   category: 'tasks.category',
+  priority: 'tasks.priority',
   is_completed: 'tasks.is_completed',
   completed_at: 'tasks.completed_at',
   user_id: 'tasks.user_id',
@@ -232,6 +233,9 @@ function getTaskQueryMainFields(
   }
   if (filter.user_id) {
     taskQuery.user_id = filter.user_id;
+  }
+  if (filter.priority) {
+    taskQuery.priority = filter.priority;
   }
   return taskQuery;
 }
