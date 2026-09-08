@@ -9,6 +9,7 @@ export type TaskStepType = {
   actual_duration: number;
   priority: string;
   user_id: string;
+  order: number;
   task_id: string;
 }
 
@@ -34,7 +35,7 @@ export type TaskStepSummaryType = {
   label: string;
   count: number;
   done_count: number;
-  last_task_step: string;
+  last_task_step_date: string;
   time_due: string;
   estimated_time: number;
   actual_time: number;

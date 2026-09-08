@@ -3,12 +3,15 @@ import { IsDate, IsOptional, IsString } from "class-validator";
 
 
 export class CreateTaskDto {
+  @IsOptional()
   @IsString()
   name: string;
   
+  @IsOptional()
   @IsString()
   description: string;
 
+  @IsOptional()
   @IsString()
   category: string;
 

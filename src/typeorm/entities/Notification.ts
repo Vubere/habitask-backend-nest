@@ -1,5 +1,6 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
+import { User } from "./User";
 
 export const NotificationSourceEnum = ['habit', 'habit-action', 'task', 'task_step'] as const;
 
@@ -30,4 +31,11 @@ export class Notification extends BaseEntity {
 
   @Column('varchar', { length: 50 })
   user_id: string;
+
+  @ManyToOne(() => User, user => user.notifications, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
+  @JoinColumn({name: 'user_id'})
+  user: User;
 }

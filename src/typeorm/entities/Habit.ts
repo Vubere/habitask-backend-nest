@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
 import { User } from "./User";
 import { HabitOccurence } from "./HabitOccurence";
+import { HabitAction } from "./HabitAction";
 
 @Entity({
   name: 'habits',
@@ -40,4 +41,7 @@ export class Habit extends BaseEntity {
 
   @OneToMany(() => HabitOccurence, habitOccurence => habitOccurence.habit)
   habit_occurences: HabitOccurence[];
+
+  @OneToMany(() => HabitAction, habitAction => habitAction.habit)
+  habit_actions: HabitAction[];
 }

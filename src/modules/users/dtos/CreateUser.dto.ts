@@ -24,27 +24,27 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
-  @IsString()
   @IsOptional()
+  @IsString()
   first_name?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   last_name?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   username?: string;
 
-  @IsEmail()
   @IsOptional()
+  @IsEmail()
   email?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   profession?: string;
   
-  @IsString()
   @IsOptional()
+  @IsString()
   bio?: string;
 }

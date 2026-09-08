@@ -19,6 +19,8 @@ export type HabitCreateType = {
   pros: string;
   cons: string;
   user_id: string;
+  is_positive?: boolean;
+  last_done?: string;
 }
 
 export type HabitUpdateType = {
@@ -40,3 +42,11 @@ export type HabitQueryType = {
   group_by?: string;
   date_group?: string;
 } & HabitType;
+
+export type HabitSummaryType = {
+  label: string;
+  count: number;
+  positive_count: number;
+  negative_count: number;
+  last_habit_date: string;
+}

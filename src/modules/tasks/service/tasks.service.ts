@@ -154,7 +154,7 @@ export class TasksService {
       });
     }
     if (filter.group_by?.startsWith('users.')) {
-      query = query.innerJoin('users', 'tasks.user_id = users.id');
+      query = query.innerJoin('users', 'users', 'tasks.user_id = users.id');
     }
     const taskQuery: Partial<TaskQueryType> = getTaskQueryMainFields(filter);
     if (Object.keys(taskQuery).length > 0) {

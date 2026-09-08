@@ -26,8 +26,6 @@ export type HabitActionUpdateType = {
   category?: string;
   cost_incurred?: number;
   is_positive?: boolean;
-  habit_id?: string;
-  user_id?: string;
 }
 
 export type HabitActionCompleteType = {
