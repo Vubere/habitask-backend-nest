@@ -17,7 +17,7 @@ export class HabitAction extends BaseEntity {
  @Column('varchar', { length: 50 })
  category: string;
 
- @Column('float64', { default: 0 })
+ @Column('int', { default: 0 })
  cost_incurred: number;
 
  @Column('boolean', { default: false, nullable: true })

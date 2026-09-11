@@ -28,3 +28,14 @@ export type UpdateUserType = {
   profession?: string;
   bio?: string;
 }
+
+export type UserLoginType = {
+  email: string;
+  password: string;
+}
+
+export type AuthInfo = {
+  user_id: string;
+  username: string;
+  exp: number;
+}

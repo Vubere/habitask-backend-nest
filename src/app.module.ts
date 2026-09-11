@@ -13,12 +13,17 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { HabitsModule } from './modules/habits/habits.module';
 import { HabitOccurencesModule } from './modules/habit-occurences/habit-occurences.module';
 import { HabitActionsModule } from './modules/habit-actions/habit-actions.module';
-import { TaskStep } from "./typeorm/entities/TaskStep";
-import { Reminder } from "./typeorm/entities/Reminder";
-import { Notification } from "./typeorm/entities/Notification";
-import { Habit } from "./typeorm/entities/Habit";
-import { HabitOccurence } from "./typeorm/entities/HabitOccurence";
-import { HabitAction } from "./typeorm/entities/HabitAction";
+import { TaskStep } from './typeorm/entities/TaskStep';
+import { Reminder } from './typeorm/entities/Reminder';
+import { Notification } from './typeorm/entities/Notification';
+import { Habit } from './typeorm/entities/Habit';
+import { HabitOccurence } from './typeorm/entities/HabitOccurence';
+import { HabitAction } from './typeorm/entities/HabitAction';
+import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './modules/users/users.auth.guard';
+import { SetMetadata } from '@nestjs/common';
+
 
 @Module({
   imports: [
@@ -35,8 +40,26 @@ import { HabitAction } from "./typeorm/entities/HabitAction";
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
-        entities: [User, Task, TaskStep, Reminder, Notification, Habit, HabitOccurence, HabitAction],
+        entities: [
+          User,
+          Task,
+          TaskStep,
+          Reminder,
+          Notification,
+          Habit,
+          HabitOccurence,
+          HabitAction,
+        ],
         synchronize: true,
+      }),
+    }),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET_KEY'),
+        signOptions: {
+          expiresIn: '7d',
+        },
       }),
     }),
     UsersModule,
@@ -49,6 +72,12 @@ import { HabitAction } from "./typeorm/entities/HabitAction";
     HabitActionsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}

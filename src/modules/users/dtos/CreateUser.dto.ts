@@ -23,6 +23,14 @@ export class CreateUserDto {
   bio: string;
 }
 
+export class UserLoginDto {
+  @IsString()
+  email: string;
+
+  @IsString()
+  password: string;
+}
+
 export class UpdateUserDto {
   @IsOptional()
   @IsString()

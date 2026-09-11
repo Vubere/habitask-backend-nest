@@ -1,4 +1,5 @@
 import { SummaryGroup } from "./types";
+import * as bcrypt from "bcrypt";
 
 export function getOffset(page: number, perPage: number): number {
   return (page - 1) * perPage;
@@ -36,4 +37,12 @@ export function getSummaryDateExpression(dateGroup: string, field: string): stri
     default:
       throw new Error(`invalid date group: ${dateGroup}`);
   }
+}
+
+export function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
+
+export function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
 }

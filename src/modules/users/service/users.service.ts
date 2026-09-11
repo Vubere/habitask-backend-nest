@@ -1,14 +1,64 @@
 import { PaginationAndSort } from './../../../utils/types';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../../../typeorm/entities/User";
-import { FindOptionsWhere, ILike, Repository } from "typeorm";
-import { CreateUserType, UpdateUserType, FindUserType } from "../types";
-import { getOffset } from "../../../utils/helpers";
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../../../typeorm/entities/User';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { CreateUserType, UpdateUserType, FindUserType } from '../types';
+import { getOffset, hashPassword, verifyPassword } from '../../../utils/helpers';
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
+  async signUp(user: CreateUserType) {
+    const validateUser = await this.userRepository.findOne({
+      where: {
+        email: user.email,
+      },
+    });
+    if (validateUser) {
+      throw new Error('Email already exists');
+    }
+    const validateUsername = await this.userRepository.findOne({
+      where: {
+        username: user.username,
+      },
+    });
+    if (validateUsername) {
+      throw new Error('Username already exists');
+    }
+    const hashedPassword = await hashPassword(user.password);
+    user.password  = hashedPassword;
+    const newUser = this.userRepository.create({
+      ...user,
+    });
+    return this.userRepository.save(newUser);
+  }
+  async login(usernameOrEmail: string, password: string) {
+    const user = await this.userRepository.findOne({
+      where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    });
+    if (!user) {
+      throw new Error('Invalid username or password');
+    }
+    if (!await verifyPassword(password, user.password)) {
+      throw new Error('Invalid username or password');
+    }
+    const token = await this.jwtService.signAsync({
+      user_id: user.id,
+      username: user.username,
+      email: user.email,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+    });
+    return {
+      token,
+      user,
+    };
+  }
   findUsers(filter: FindUserType, pagination: PaginationAndSort) {
     const where: FindOptionsWhere<User> = {};
     if (filter.search) {
@@ -41,7 +91,7 @@ export class UsersService {
     }
     return this.userRepository.find({
       where: {
-       ...where
+        ...where,
       },
       skip: getOffset(pagination.page, pagination.per_page),
       take: pagination.per_page,
@@ -78,13 +128,18 @@ export class UsersService {
       },
     });
   }
-  createUser(userDetails: CreateUserType)  {
+  findUserByUsernameOrEmail(usernameOrEmail: string) {
+    return this.userRepository.findOne({
+      where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    });
+  }
+  createUser(userDetails: CreateUserType) {
     const newUser = this.userRepository.create({
       ...userDetails,
-    })
+    });
     return this.userRepository.save(newUser);
   }
-  updateUser(id:string, user: UpdateUserType) {
+  updateUser(id: string, user: UpdateUserType) {
     return this.userRepository.update(id, user);
   }
   deleteUser(id: string) {
