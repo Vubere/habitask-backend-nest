@@ -12,7 +12,7 @@ import { JwtService } from "@nestjs/jwt";
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
   async signUp(user: CreateUserType) {
     const validateUser = await this.userRepository.findOne({
@@ -52,7 +52,6 @@ export class UsersService {
       user_id: user.id,
       username: user.username,
       email: user.email,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
     });
     return {
       token,

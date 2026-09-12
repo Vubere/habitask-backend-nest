@@ -22,8 +22,6 @@ import { HabitAction } from './typeorm/entities/HabitAction';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/users/users.auth.guard';
-import { SetMetadata } from '@nestjs/common';
-
 
 @Module({
   imports: [
@@ -55,12 +53,18 @@ import { SetMetadata } from '@nestjs/common';
     }),
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET_KEY'),
-        signOptions: {
-          expiresIn: '7d',
-        },
-      }),
+      global: true,
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET_KEY');
+
+        return {
+          secret: secret,
+          signOptions: {
+            expiresIn: '7d',
+            issuer: 'habitask',
+          },
+        };
+      },
     }),
     UsersModule,
     TasksModule,

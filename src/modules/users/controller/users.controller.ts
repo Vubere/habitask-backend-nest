@@ -45,7 +45,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -64,7 +64,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -81,7 +81,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -104,7 +104,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -122,7 +122,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -140,7 +140,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -159,7 +159,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }
@@ -177,7 +177,7 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error,
+        error: (error as any)?.message || "failed to process request",
       });
     }
   }

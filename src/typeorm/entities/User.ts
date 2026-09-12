@@ -27,22 +27,22 @@ export class User extends BaseEntity {
   @Column('varchar', { length: 100 })
   password: string;
 
-  @Column('varchar', { length: 100 })
+  @Column('varchar', { length: 100, nullable: true })
   token: string;
 
-  @Column('datetime')
+  @Column('datetime', { nullable: true })
   token_expiry: Date;
 
-  @Column('boolean')
+  @Column('boolean', {default: false})
   is_admin: boolean;
 
-  @Column('boolean')
+  @Column('boolean', {default: true})
   is_active: boolean;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 50, nullable: true })
   profession: string;
 
-  @Column('varchar', { length: 500 })
+  @Column('varchar', { length: 500, default: "" })
   bio: string;
 
   //Relations
