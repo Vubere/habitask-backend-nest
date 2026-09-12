@@ -40,7 +40,7 @@ export class Reminder extends BaseEntity {
   @Column('varchar', { length: 50, nullable: true })
   source_field_type: string;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   user_id: string;
 
   @Column('boolean', { default: false })

@@ -8,11 +8,11 @@ import { User } from "./User";
   name: 'task_steps',
 })
 export class TaskStep extends BaseEntity {
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   task_id: string;
 
   
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   user_id: string;
   
   @Column('varchar', { length: 500 })

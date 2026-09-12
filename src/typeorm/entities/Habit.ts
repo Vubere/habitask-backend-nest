@@ -23,7 +23,7 @@ export class Habit extends BaseEntity {
   @Column('text')
   cons: string;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   user_id: string;
 
   @Column('boolean', { default: false })

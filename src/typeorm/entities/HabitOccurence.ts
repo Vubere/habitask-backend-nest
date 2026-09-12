@@ -10,10 +10,10 @@ export class HabitOccurence extends BaseEntity {
   @Column('datetime', { nullable: false })
   date: Date;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   habit_id: string;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   user_id: string;
 
   //Relations

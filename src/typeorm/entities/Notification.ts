@@ -29,7 +29,7 @@ export class Notification extends BaseEntity {
   @Column('varchar', { length: 50 })
   source_id: string;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 36 })
   user_id: string;
 
   @ManyToOne(() => User, user => user.notifications, {

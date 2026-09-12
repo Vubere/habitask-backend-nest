@@ -23,10 +23,10 @@ export class HabitAction extends BaseEntity {
  @Column('boolean', { default: false, nullable: true })
  is_positive: boolean;
 
- @Column('varchar', { length: 50 })
+ @Column('varchar', { length: 36 })
  habit_id: string;
 
- @Column('varchar', { length: 50 })
+ @Column('varchar', { length: 36 })
  user_id: string;
 
  //Relations

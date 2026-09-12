@@ -35,7 +35,7 @@ export class Task extends BaseEntity {
   @Column('varchar', { length: 50, default: 'low' })
   priority: string;
 
-  @Column({type: 'varchar', length: 50})
+  @Column({type: 'varchar', length: 36})
   user_id: string;
 
   @ManyToOne(() => User, user => user.tasks, {
