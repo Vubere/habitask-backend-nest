@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { TaskStep } from "../../../typeorm/entities/TaskStep";
 import { Repository } from "typeorm";
-import { TaskStepQueryType, TaskStepSummaryType, TaskStepType } from "../types";
+import { TaskStepCreateType, TaskStepQueryType, TaskStepSummaryType, TaskStepType, TaskStepUpdateType } from "../types";
 import { getSummaryExpression } from "../../../utils/helpers";
 
 @Injectable()
@@ -167,11 +167,11 @@ export class TaskStepsService {
       .take(pagination.per_page)
       .getRawMany();
   }
-  createTaskStep(taskStep: TaskStep) {
+  createTaskStep(taskStep: TaskStepCreateType) {
     const createdTaskStep = this.taskStepRepository.create(taskStep);
     return this.taskStepRepository.save(createdTaskStep);
   }
-  async updateTaskStep(id: string, taskStep: TaskStep) {
+  async updateTaskStep(id: string, taskStep: TaskStepUpdateType) {
     await this.taskStepRepository.update(id, taskStep);
     return this.taskStepRepository.findOne({
       where: {

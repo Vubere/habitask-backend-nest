@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from "class-validator";
 
 
-export class FindHabbitOccurenceQuery {
+export class FindHabitOccurenceQuery {
   @IsOptional()
   @IsString()
   search?: string;

@@ -3,21 +3,25 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 
 export class UpdateHabitActionDto {
+    @IsOptional()
     @IsString()
-    title: string;
+    title?: string;
 
+    @IsOptional()
     @IsString()
-    description: string;
+    description?: string;
 
+    @IsOptional()
     @IsString()
-    category: string;
+    category?: string;
 
+    @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    cost_incurred: number;
+    cost_incurred?: number;
 
     @IsOptional()
     @Type(() => Boolean)
     @IsBoolean()
-    is_positive: boolean | null;
+    is_positive?: boolean;
 }

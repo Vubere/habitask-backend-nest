@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsBoolean, IsDate, IsOptional, IsString } from "class-validator";
 
-export class CreateHabitDto {
+export class HabitUpdateDto {
    @IsOptional()
    @IsString()
    name: string;

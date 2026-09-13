@@ -37,5 +37,6 @@ export type UserLoginType = {
 export type AuthInfo = {
   user_id: string;
   username: string;
+  role: "admin" | "user";
   exp: number;
 }

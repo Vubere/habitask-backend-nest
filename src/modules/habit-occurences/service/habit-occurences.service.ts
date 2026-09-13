@@ -126,7 +126,7 @@ export class HabitOccurencesService {
       this.habitOccurenceRepository.create(habitOccurence);
     return this.habitOccurenceRepository.save(createdHabitOccurence);
   }
-  async updateHabitOccurence(id: string, habitOccurence: HabitOccurenceType) {
+  async updateHabitOccurence(id: string, habitOccurence: Partial<HabitOccurenceType>) {
     await this.habitOccurenceRepository.update(id, habitOccurence);
     return this.habitOccurenceRepository.findOne({
       where: {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from '../../../typeorm/entities/Task';
 import { Repository } from 'typeorm';
-import { TaskCreateType, TaskQueryType, TaskSummaryType, TaskType } from '../types';
+import { TaskCreateType, TaskQueryType, TaskSummaryType, TaskType, TaskUpdateType } from '../types';
 import { PaginationAndSort } from '../../../utils/types';
 import { getOffset, getSummaryExpression } from '../../../utils/helpers';
 
@@ -11,7 +11,7 @@ export class TasksService {
   constructor(
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
-  findTask(filter: TaskQueryType, pagination: PaginationAndSort) {
+  findTasks(filter: TaskQueryType, pagination: PaginationAndSort) {
     let query = this.taskRepository.createQueryBuilder('tasks');
     if (filter.search) {
       query = query.where(
@@ -181,7 +181,7 @@ export class TasksService {
     const createdTask = this.taskRepository.create(task);
     return this.taskRepository.save(createdTask);
   }
-  async updateTask(id: string, task: TaskCreateType) {
+  async updateTask(id: string, task: TaskUpdateType) {
     await this.taskRepository.update(id, task);
     return this.taskRepository.findOne({
       where: {

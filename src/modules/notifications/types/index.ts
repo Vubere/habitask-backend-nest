@@ -32,6 +32,13 @@ export type NotificationUpdateType = {
   source_id?: string;
 }
 
+export type NotificationSummaryType = {
+  label: string;
+  count: number;
+  last_notification_date: string;
+  unread_count: number;
+}
+
 export type NotificationCompleteType = {
   is_read: boolean;
 }
@@ -42,4 +49,4 @@ export type NotificationQueryType = {
   date_gte?: string;
   group_by?: string;
   date_group?: string;
-} & NotificationType;
+} & Partial<NotificationType>;

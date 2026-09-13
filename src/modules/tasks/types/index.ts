@@ -5,8 +5,8 @@ export type TaskType = {
   category: string;
   description: string;
   is_completed: boolean;
-  completed_at: string;
-  due_at: string;
+  completed_at: Date;
+  due_at: Date;
   estimated_duration: number;
   actual_duration: number;
   duration_unit: string;
@@ -19,7 +19,6 @@ export type TaskCreateType = {
   category: string;
   description: string;
   estimated_duration: number;
-  duration_unit: string;
   user_id: string;
 }
 
@@ -46,10 +45,10 @@ export type TaskSummaryType = {
 
 export type TaskQueryType = {
   search?: string;
-  completed_at_lte?: string;
-  completed_at_gte?: string;
-  due_at_lte?: string;
-  due_at_gte?: string;
+  completed_at_lte?: Date;
+  completed_at_gte?: Date;
+  due_at_lte?: Date;
+  due_at_gte?: Date;
   estimated_duration_lte?: number;
   estimated_duration_gte?: number;
   actual_duration_lte?: number;
@@ -57,4 +56,4 @@ export type TaskQueryType = {
   group_by?: string;
   date_group?: string;
   priority?: string;
-} & TaskType;
+} & Partial<TaskType>;

@@ -40,4 +40,8 @@ export class QueryNotificationDto {
   @IsOptional()
   @IsString()
   source_id: string;
+
+  @IsOptional()
+  @IsString()
+  user_id: string;
 }

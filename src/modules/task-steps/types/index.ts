@@ -18,6 +18,7 @@ export type TaskStepCreateType = {
   estimated_duration: number;
   time_due: string;
   task_id: string;
+  user_id: string;
 }
 
 export type TaskStepUpdateType = {

@@ -56,4 +56,8 @@ export class QueryReminderDto {
   @IsOptional()
   @IsString()
   date_gte: string;
+
+  @IsOptional()
+  @IsString()
+  user_id: string;
 }

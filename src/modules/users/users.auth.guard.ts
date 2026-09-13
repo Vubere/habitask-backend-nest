@@ -36,6 +36,7 @@ export class AuthGuard implements CanActivate {
       request['user_id'] = payload.user_id;
       request['username'] = payload.username;
       request['exp'] = payload.exp;
+      request['role'] = payload.role;
     } catch {
       throw new UnauthorizedException();
     }

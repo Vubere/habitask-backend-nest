@@ -52,6 +52,7 @@ export class UsersService {
       user_id: user.id,
       username: user.username,
       email: user.email,
+      role: user.is_admin ? 'admin' : 'user',
     });
     return {
       token,

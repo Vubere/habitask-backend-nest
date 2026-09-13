@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Habit } from "../../../typeorm/entities/Habit";
 import { Repository } from "typeorm";
 import { getSummaryExpression } from "../../../utils/helpers";
-import { HabitQueryType, HabitSummaryType, HabitType } from "../types";
+import { HabitCreateType, HabitQueryType, HabitSummaryType, HabitType } from "../types";
 import { PaginationAndSort } from "../../../utils/types";
 
 @Injectable()
@@ -94,11 +94,11 @@ export class HabitsService {
       .take(pagination.per_page)
       .getRawMany();
   }
-  createHabit(habit: HabitType) {
+  createHabit(habit: Omit<HabitCreateType, "id">) {
     const createdHabit = this.habitRepository.create(habit);
     return this.habitRepository.save(createdHabit);
   }
-  async updateHabit(id: string, habit: HabitType) {
+  async updateHabit(id: string, habit: Partial<HabitType>) {
     await this.habitRepository.update(id, habit);
     return this.habitRepository.findOne({
       where: {

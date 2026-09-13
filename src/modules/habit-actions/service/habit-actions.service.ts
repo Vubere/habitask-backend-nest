@@ -97,11 +97,11 @@ export class HabitActionsService {
       .take(pagination.per_page)
       .getRawMany();
   }
-  createHabitAction(habitAction: HabitActionType) {
+  createHabitAction(habitAction: Omit<HabitActionType, "id">) {
     const createdHabitAction = this.habitActionRepository.create(habitAction);
     return this.habitActionRepository.save(createdHabitAction);
   }
-  async updateHabitAction(id: string, habitAction: HabitActionType) {
+  async updateHabitAction(id: string, habitAction: Partial<HabitActionType>) {
     await this.habitActionRepository.update(id, habitAction);
     return this.habitActionRepository.findOne({
       where: {

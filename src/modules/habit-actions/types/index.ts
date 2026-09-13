@@ -26,6 +26,7 @@ export type HabitActionUpdateType = {
   category?: string;
   cost_incurred?: number;
   is_positive?: boolean;
+  user_id?: string;
 }
 
 export type HabitActionCompleteType = {
@@ -38,4 +39,4 @@ export type HabitActionQueryType = {
   date_gte?: string;
   group_by?: string;
   date_group?: string;
-} & HabitActionType;
+} & Partial<HabitActionType>;

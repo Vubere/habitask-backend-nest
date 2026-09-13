@@ -19,7 +19,7 @@ export type HabitCreateType = {
   pros: string;
   cons: string;
   user_id: string;
-  is_positive?: boolean;
+  is_positive: boolean;
   last_done?: string;
 }
 
@@ -41,7 +41,7 @@ export type HabitQueryType = {
   date_gte?: string;
   group_by?: string;
   date_group?: string;
-} & HabitType;
+} & Partial<HabitType>;
 
 export type HabitSummaryType = {
   label: string;

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reminder } from '../../../typeorm/entities/Reminder';
 import { Repository } from 'typeorm';
 import { getOffset } from '../../../utils/helpers';
-import { ReminderCreateType, ReminderQueryType } from '../types';
+import { ReminderCreateType, ReminderQueryType, ReminderUpdateType } from '../types';
 
 @Injectable()
 export class RemindersService {
@@ -54,7 +54,7 @@ export class RemindersService {
     const createdReminder = this.reminderRepository.create(reminder);
     return this.reminderRepository.save(createdReminder);
   }
-  async updateReminder(id: string, reminder: ReminderCreateType) {
+  async updateReminder(id: string, reminder: ReminderUpdateType) {
     await this.reminderRepository.update(id, reminder);
     return this.reminderRepository.findOne({
       where: {

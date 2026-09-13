@@ -8,6 +8,7 @@ export const CurrentUser = createParamDecorator(
       user_id: request.user_id,
       username: request.username,
       exp: request.exp,
+      role: request.role,
     };
   },
 );

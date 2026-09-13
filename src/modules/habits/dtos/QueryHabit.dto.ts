@@ -1,45 +1,52 @@
 import { Type } from "class-transformer";
 import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class QueryHabitActionDto {
+export class HabitQueryDto {
+    @IsOptional()
+    @IsString()
+    name: string;
+
+    @IsOptional()
+    @IsString()
+    description: string;
+
+    @IsOptional()
+    @IsString()
+    user_id: string;
+
     @IsOptional()
     @IsString()
     search: string;
 
     @IsOptional()
     @IsString()
-    date_lte: string;
+    last_done_lte: string;
 
     @IsOptional()
     @IsString()
-    date_gte: string;
+    last_done_gte: string;
 
     @IsOptional()
-    @Type(() => Number)
     @IsNumber()
-    cost_incurred_lte: number;
+    order_lte: number;
 
     @IsOptional()
-    @Type(() => Number)
     @IsNumber()
-    cost_incurred_gte: number;
+    order_gte: number;
 
     @IsOptional()
-    @Type(() => Number)
+    @IsBoolean()
+    is_positive: boolean;
+
+    @IsOptional()
+    @IsString()
+    category: string;
+
+    @IsOptional()
     @IsString()
     group_by: string;
 
     @IsOptional()
     @IsString()
     date_group: string;
-
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber()
-    cost_incurred: number;
-
-    @IsOptional()
-    @Type(() => Boolean)
-    @IsBoolean()
-    is_positive: boolean | null;
 }

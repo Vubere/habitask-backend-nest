@@ -42,10 +42,12 @@ export class UsersController {
       await this.userService.signUp(user);
       return response.status(201).json({
         message: 'profile created successfully',
+        success: true,
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -64,7 +66,8 @@ export class UsersController {
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -77,11 +80,14 @@ export class UsersController {
     try {
       const user = await this.userService.findUserById(authInfo.user_id);
       return response.status(200).json({
-        user,
+        data: user,
+        success: true,
+        message: "user retrieved successfully",
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -100,11 +106,15 @@ export class UsersController {
         sort_direction: pagination.sort_direction,
       });
       return response.status(200).json({
-        users,
+        data:users,
+        success: true,
+        message: "users retrieved successfully",
+        pagination
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -118,11 +128,14 @@ export class UsersController {
     try {
       const user = await this.userService.findUserById(id);
       return response.status(200).json({
-        user,
+        data: user,
+        success: true,
+        message: "user retrieved successfully",
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -136,11 +149,13 @@ export class UsersController {
       const updatedUser = await this.userService.updateUser(id, user);
       return response.status(200).json({
         message: 'user updated successfully',
-        user: updatedUser,
+        data: updatedUser,
+        success: true,
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -155,11 +170,13 @@ export class UsersController {
       const updatedUser = await this.userService.updateUser(userId, user);
       return response.status(200).json({
         message: 'user updated successfully',
-        user: updatedUser,
+        data: updatedUser,
+        success: true,
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
@@ -174,10 +191,12 @@ export class UsersController {
       await this.userService.deleteUser(userId);
       return response.status(200).json({
         message: 'user deleted successfully',
+        success: true,
       });
     } catch (error) {
       return response.status(400).json({
-        error: (error as any)?.message || "failed to process request",
+        message: (error as any)?.message || "failed to process request",
+        success: false,
       });
     }
   }
