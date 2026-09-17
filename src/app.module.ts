@@ -22,6 +22,7 @@ import { HabitAction } from './typeorm/entities/HabitAction';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/users/users.auth.guard';
+import { HabitTaskModule } from './modules/habit-task/habit-task.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { AuthGuard } from './modules/users/users.auth.guard';
     HabitsModule,
     HabitOccurencesModule,
     HabitActionsModule,
+    HabitTaskModule,
   ],
   controllers: [AppController],
   providers: [
