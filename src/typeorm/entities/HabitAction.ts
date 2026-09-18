@@ -23,6 +23,9 @@ export class HabitAction extends BaseEntity {
  @Column('boolean', { default: false, nullable: true })
  is_positive: boolean;
 
+ @Column('boolean', { default: false, nullable: true })
+ is_done: boolean;
+
  @Column('varchar', { length: 36 })
  habit_id: string;
 

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { HabitTaskQuery, HabitTaskType } from '../types';
 import { PaginationAndSortDto } from '../../general/dtos/pagination_and_sort_dto';
-import { PaginationAndSort } from "../../general/types";
-import { getOffset } from "../../../utils/helpers";
+import { PaginationAndSort } from '../../general/types';
+import { getOffset } from '../../../utils/helpers';
 
 @Injectable()
 export class HabitTaskService {
@@ -23,7 +23,8 @@ export class HabitTaskService {
           habits.description AS description,
           habits.category AS category,
           habits.status AS status,
-          habits.progress AS progress,
+          (SELECT COUNT(*) FROM habit_actions WHERE habit_actions.habit_id = habits.id AND habit_actions.is_done = 1) AS progress,
+				  (SELECT COUNT(*) FROM habit_actions WHERE habit_actions.habit_id = habits.id) AS steps,
           habits.streak AS streak,
           habits.created_at AS created_at,
           habits.updated_at AS updated_at
@@ -38,7 +39,8 @@ export class HabitTaskService {
           tasks.description AS description,
           tasks.category AS category,
           tasks.status AS status,
-          tasks.progress AS progress,
+          (SELECT COUNT(*) FROM task_steps WHERE task_steps.task_id = tasks.id AND task_steps.is_done = 1) AS progress,
+				  (SELECT COUNT(*) FROM task_steps WHERE task_steps.task_id = tasks.id) AS steps,
           NULL AS streak,
           tasks.created_at AS created_at,
           tasks.updated_at AS updated_at
@@ -51,7 +53,12 @@ export class HabitTaskService {
       LIMIT ?
     `;
 
-    const params: any[] = [filter.user_id, filter.user_id, getOffset(pagination.page, pagination.per_page), pagination.per_page];
+    const params: any[] = [
+      filter.user_id,
+      filter.user_id,
+      getOffset(pagination.page, pagination.per_page),
+      pagination.per_page,
+    ];
 
     if (filter.created_at_gte) {
       query += ` AND habit_tasks.created_at >= ?`;
