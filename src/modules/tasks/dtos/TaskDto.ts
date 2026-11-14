@@ -1,20 +1,44 @@
-export class TaskDto {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  user_id: string;
-  due_at: Date;
-  completed_at: Date;
-  estimated_duration: number;
-  actual_duration: number;
-}
+import { IsArray, IsOptional, IsString } from 'class-validator';
+import { Subtask, TaskStatus } from '../types';
 
-export class TaskSummaryDto {
-  label: string;
-  count: number;
-  completed_count: number;
-  incomplete_count: number;
-  dueCount: number;
-  lastDone: string | null;
+export class TaskDto {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @IsOptional()
+  @IsString()
+  icon?: string;
+
+  @IsOptional()
+  @IsString()
+  color?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: "todo" | "done";
+
+  @IsOptional()
+  @IsString()
+  due_date?: string;
+
+  @IsOptional()
+  @IsString()
+  due_time?: string;
+
+  @IsOptional()
+  @IsString()
+  priority?: string;
+
+  @IsOptional()
+  @IsArray()
+  subtasks?: Subtask[];
+
+  @IsOptional()
+  @IsString()
+  user_id?: string;
 }

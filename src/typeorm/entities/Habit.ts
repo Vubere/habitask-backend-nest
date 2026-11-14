@@ -1,47 +1,69 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
 import { User } from "./User";
-import { HabitOccurence } from "./HabitOccurence";
-import { HabitAction } from "./HabitAction";
+import { HabitCompletion } from "./HabitCompletion";
+
+export type FrequencyKind = "daily" | "weekdays" | "timesPerWeek";
+
+export type Frequency =
+  | { kind: "daily" }
+  | { kind: "weekdays"; days: number[] }
+  | { kind: "timesPerWeek"; count: number };
+
+export type Polarity = "positive" | "negative";
 
 @Entity({
-  name: 'habits',
+  name: "habits",
 })
 export class Habit extends BaseEntity {
-  @Column('varchar', { length: 100 })
-  name: string;
+  @Column("varchar", { length: 100 })
+  title: string;
 
-  @Column('varchar', { length: 500 })
-  description: string;
+  @Column("varchar", { length: 500, default: "" })
+  notes: string;
 
-  @Column('varchar', { length: 50 })
-  category: string;
+  @Column("varchar", { length: 50, default: "circle" })
+  icon: string;
 
-  @Column('text')
-  pros: string;
+  @Column("varchar", { length: 20, default: "#4F46E5" })
+  color: string;
 
-  @Column('text')
-  cons: string;
+  @Column("datetime", { nullable: true })
+  archived_at: Date | null;
 
-  @Column('varchar', { length: 36 })
+  @Column("varchar", { length: 36 })
   user_id: string;
 
-  @Column('boolean', { default: false })
-  is_positive: boolean;
+  @Column("varchar", { length: 20, default: "daily" })
+  frequency_kind: FrequencyKind;
 
-  @Column('datetime', { nullable: true })
-  last_done: Date;
+  // "1,3,5" for weekdays
+  @Column("varchar", { length: 20, nullable: true })
+  frequency_days: string | null;
 
-  //Relations
-  @ManyToOne(() => User, user => user.habits, {
-    onDelete: 'CASCADE',
+  @Column("int", { nullable: true })
+  frequency_count: number | null;
+
+  @Column("date")
+  start_date: string;
+
+  @Column("int", { default: 1 })
+  target_per_day: number;
+
+  // "HH:mm"
+  @Column("varchar", { length: 5, nullable: true })
+  reminder_time: string | null;
+
+  @Column("varchar", { length: 10, default: "positive" })
+  polarity: Polarity;
+
+  // Relations
+  @ManyToOne(() => User, (user) => user.habits, {
+    onDelete: "CASCADE",
   })
-  @JoinColumn({name: 'user_id'})
+  @JoinColumn({ name: "user_id" })
   user: User;
 
-  @OneToMany(() => HabitOccurence, habitOccurence => habitOccurence.habit)
-  habit_occurences: HabitOccurence[];
-
-  @OneToMany(() => HabitAction, habitAction => habitAction.habit)
-  habit_actions: HabitAction[];
+  @OneToMany(() => HabitCompletion, (completion) => completion.habit)
+  habit_completions: HabitCompletion[];
 }

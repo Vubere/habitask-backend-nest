@@ -1,29 +1,49 @@
 import { Type } from "class-transformer";
-import { IsBoolean, IsDate, IsOptional, IsString } from "class-validator";
+import { IsInt, IsOptional, IsString } from "class-validator";
 
 export class CreateHabitDto {
-   @IsString()
-   name: string;
+  @IsString()
+  title: string;
 
-   @IsString()
-   description: string;
+  @IsOptional()
+  @IsString()
+  notes?: string;
 
-   @IsString()
-   category: string;
+  @IsOptional()
+  @IsString()
+  icon?: string;
 
-   @IsString()
-   pros: string;
+  @IsOptional()
+  @IsString()
+  color?: string;
 
-   @IsString()
-   cons: string;
+  @IsOptional()
+  @IsString()
+  frequency_kind?: "daily" | "weekdays" | "timesPerWeek";
 
-   @IsOptional()
-   @Type(()=>Boolean)
-   @IsBoolean()
-   is_positive?: boolean;
+  @IsOptional()
+  @IsString()
+  frequency_days?: string;
 
-   @IsOptional()
-   @Type(()=>Date)
-   @IsDate()
-   last_done?: string
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  frequency_count?: number;
+
+  @IsOptional()
+  @IsString()
+  start_date?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  target_per_day?: number;
+
+  @IsOptional()
+  @IsString()
+  reminder_time?: string;
+
+  @IsOptional()
+  @IsString()
+  polarity?: "positive" | "negative";
 }

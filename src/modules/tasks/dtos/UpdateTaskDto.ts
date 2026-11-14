@@ -1,35 +1,46 @@
-import { Type } from "class-transformer";
-import { IsDate, IsNumber, IsOptional, IsString } from "class-validator";
-
+import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import { Subtask } from '../types';
 
 export class UpdateTaskDto {
   @IsOptional()
   @IsString()
-  name: string;
-  
-  @IsOptional()
-  @IsString()
-  description: string;
+  title?: string;
 
   @IsOptional()
   @IsString()
-  category: string;
+  notes?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  due_at: string;
+  @IsString()
+  icon?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  completed_at: string;
+  @IsString()
+  color?: string;
 
-  @IsNumber()
-  @Type(() => Number)
-  estimated_duration: number;
+  @IsOptional()
+  @IsString()
+  status?: "todo" | "done";
 
-  @IsNumber()
-  @Type(() => Number)
-  actual_duration: number;
+  @IsOptional()
+  @IsString()
+  due_date?: string;
+
+  @IsOptional()
+  @IsString()
+  due_time?: string;
+
+  @IsOptional()
+  @IsString()
+  priority?: string;
+
+  @IsOptional()
+  @IsArray()
+  subtasks?: Subtask[];
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  archived?: boolean;
 }

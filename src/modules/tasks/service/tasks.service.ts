@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from '../../../typeorm/entities/Task';
 import { Repository } from 'typeorm';
-import { TaskCreateType, TaskQueryType, TaskSummaryType, TaskType, TaskUpdateType } from '../types';
+import { Task } from '../../../typeorm/entities/Task';
+import {
+  TaskCreateType,
+  TaskQueryType,
+  TaskSummaryType,
+  TaskUpdateType,
+} from '../types';
 import { PaginationAndSort } from '../../../utils/types';
 import { getOffset, getSummaryExpression } from '../../../utils/helpers';
 
@@ -11,72 +16,57 @@ export class TasksService {
   constructor(
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
+
   findTasks(filter: TaskQueryType, pagination: PaginationAndSort) {
     let query = this.taskRepository.createQueryBuilder('tasks');
     if (filter.search) {
       query = query.where(
-        'tasks.name LIKE :search OR tasks.description LIKE :search',
+        '(tasks.title LIKE :search OR tasks.notes LIKE :search)',
         {
           search: `%${filter.search}%`,
         },
       );
     }
-    if (filter.completed_at_lte) {
-      query = query.andWhere('tasks.completed_at <= :completed_at_lte', {
-        completed_at_lte: filter.completed_at_lte,
+    if (filter.user_id) {
+      query = query.andWhere('tasks.user_id = :user_id', {
+        user_id: filter.user_id,
       });
     }
-    if (filter.completed_at_gte) {
-      query = query.andWhere('tasks.completed_at >= :completed_at_gte', {
-        completed_at_gte: filter.completed_at_gte,
+    if (filter.status) {
+      query = query.andWhere('tasks.status = :status', {
+        status: filter.status,
       });
     }
-    if (filter.due_at_lte) {
-      query = query.andWhere('tasks.due_at <= :due_at_lte', {
-        due_at_lte: filter.due_at_lte,
+    if (filter.priority) {
+      query = query.andWhere('tasks.priority = :priority', {
+        priority: filter.priority,
       });
     }
-    if (filter.due_at_gte) {
-      query = query.andWhere('tasks.due_at >= :due_at_gte', {
-        due_at_gte: filter.due_at_gte,
+    if (filter.date_lte) {
+      query = query.andWhere('tasks.created_at <= :date_lte', {
+        date_lte: filter.date_lte,
       });
     }
-    if (filter.estimated_duration_lte) {
-      query = query.andWhere(
-        'tasks.estimated_duration <= :estimated_duration_lte',
-        {
-          estimated_duration_lte: filter.estimated_duration_lte,
-        },
-      );
-    }
-    if (filter.estimated_duration_gte) {
-      query = query.andWhere(
-        'tasks.estimated_duration >= :estimated_duration_gte',
-        {
-          estimated_duration_gte: filter.estimated_duration_gte,
-        },
-      );
-    }
-    if (filter.actual_duration_lte) {
-      query = query.andWhere('tasks.actual_duration <= :actual_duration_lte', {
-        actual_duration_lte: filter.actual_duration_lte,
+    if (filter.date_gte) {
+      query = query.andWhere('tasks.created_at >= :date_gte', {
+        date_gte: filter.date_gte,
       });
     }
-    if (filter.actual_duration_gte) {
-      query = query.andWhere('tasks.actual_duration >= :actual_duration_gte', {
-        actual_duration_gte: filter.actual_duration_gte,
-      });
-    }
-    const taskQuery: Partial<TaskQueryType> = getTaskQueryMainFields(filter);
-    if (Object.keys(taskQuery).length > 0) {
-      query = query.andWhere(taskQuery);
+    if (filter.archived === true) {
+      query = query.andWhere('tasks.archived_at IS NOT NULL');
+    } else {
+      query = query.andWhere('tasks.archived_at IS NULL');
     }
     return query
       .skip(getOffset(pagination.page, pagination.per_page))
       .take(pagination.per_page)
-      .orderBy(pagination.sort_by, pagination.sort_direction)
+      .orderBy(
+        `tasks.${pagination.sort_by || 'created_at'}`,
+        pagination.sort_direction || 'DESC',
+      )
       .getMany();
   }
+
   findTasksById(id: string) {
     return this.taskRepository.findOne({
       where: {
@@ -84,6 +74,7 @@ export class TasksService {
       },
     });
   }
+
   findTasksByUserId(id: string) {
     return this.taskRepository.find({
       where: {
@@ -91,7 +82,11 @@ export class TasksService {
       },
     });
   }
-  findTaskSummary(filter: TaskQueryType, pagination: PaginationAndSort): Promise<TaskSummaryType[]> {
+
+  findTaskSummary(
+    filter: TaskQueryType,
+    pagination: PaginationAndSort,
+  ): Promise<TaskSummaryType[]> {
     const groupExpr = getSummaryExpression({
       GroupBy: filter.group_by!,
       DateGroup: filter.date_group!,
@@ -99,76 +94,28 @@ export class TasksService {
       AllowedGrouping: taskSummaryGroups,
     });
     let query = this.taskRepository.createQueryBuilder('tasks');
+    if (filter.user_id) {
+      query = query.andWhere('tasks.user_id = :user_id', {
+        user_id: filter.user_id,
+      });
+    }
     if (filter.search) {
-      query = query.where(
-        'tasks.name LIKE :search OR tasks.description LIKE :search',
-        {
-          search: `%${filter.search}%`,
-        },
-      );
-    }
-    if (filter.completed_at_lte) {
-      query = query.andWhere('tasks.completed_at <= :completed_at_lte', {
-        completed_at_lte: filter.completed_at_lte,
-      });
-    }
-    if (filter.completed_at_gte) {
-      query = query.andWhere('tasks.completed_at >= :completed_at_gte', {
-        completed_at_gte: filter.completed_at_gte,
-      });
-    }
-    if (filter.due_at_lte) {
-      query = query.andWhere('tasks.due_at <= :due_at_lte', {
-        due_at_lte: filter.due_at_lte,
-      });
-    }
-    if (filter.due_at_gte) {
-      query = query.andWhere('tasks.due_at >= :due_at_gte', {
-        due_at_gte: filter.due_at_gte,
-      });
-    }
-    if (filter.estimated_duration_lte) {
       query = query.andWhere(
-        'tasks.estimated_duration <= :estimated_duration_lte',
-        {
-          estimated_duration_lte: filter.estimated_duration_lte,
-        },
+        '(tasks.title LIKE :search OR tasks.notes LIKE :search)',
+        { search: `%${filter.search}%` },
       );
     }
-    if (filter.estimated_duration_gte) {
-      query = query.andWhere(
-        'tasks.estimated_duration >= :estimated_duration_gte',
-        {
-          estimated_duration_gte: filter.estimated_duration_gte,
-        },
-      );
-    }
-    if (filter.actual_duration_lte) {
-      query = query.andWhere('tasks.actual_duration <= :actual_duration_lte', {
-        actual_duration_lte: filter.actual_duration_lte,
-      });
-    }
-    if (filter.actual_duration_gte) {
-      query = query.andWhere('tasks.actual_duration >= :actual_duration_gte', {
-        actual_duration_gte: filter.actual_duration_gte,
-      });
-    }
-    if (filter.group_by?.startsWith('users.')) {
+    if (groupExpr.startsWith('users.')) {
       query = query.innerJoin('users', 'users', 'tasks.user_id = users.id');
     }
-    const taskQuery: Partial<TaskQueryType> = getTaskQueryMainFields(filter);
-    if (Object.keys(taskQuery).length > 0) {
-      query = query.andWhere(taskQuery);
-    }
-
     return query
       .select(
         `
         ${groupExpr} as label,
         COUNT(tasks.id) as count,
-        SUM(tasks.is_completed) as completed_count,
-        SUM(tasks.is_completed = 0) as incomplete_count,
-        MAX(tasks.due_at) as due_count,
+        SUM(tasks.status = 'done') as completed_count,
+        SUM(tasks.status = 'todo') as incomplete_count,
+        SUM(tasks.due_date IS NOT NULL) as due_count,
         MAX(tasks.completed_at) as last_task_date
       `,
       )
@@ -177,65 +124,44 @@ export class TasksService {
       .take(pagination.per_page)
       .getRawMany();
   }
+
   createTask(task: TaskCreateType) {
-    const createdTask = this.taskRepository.create(task);
+    const payload = {
+      ...task,
+      status: task.status ?? 'todo',
+      priority: task.priority ?? 'none',
+      subtasks: task.subtasks ?? [],
+    };
+    const createdTask = this.taskRepository.create(payload);
     return this.taskRepository.save(createdTask);
   }
+
   async updateTask(id: string, task: TaskUpdateType) {
-    await this.taskRepository.update(id, task);
-    return this.taskRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
+    const { archived, ...rest } = task;
+    if (rest.status === 'done' && !rest.completed_at) {
+      rest.completed_at = new Date();
+    }
+    await this.taskRepository.update(id, rest);
+    if (archived !== undefined) {
+      await this.taskRepository.update(id, {
+        archived_at: archived ? new Date() : null,
+      });
+    }
+    return this.findTasksById(id);
   }
+
   deleteTask(id: string) {
-    return this.taskRepository.delete(id);
+    return this.taskRepository.update(id, { archived_at: new Date() });
   }
 }
 
 const taskSummaryGroups: Record<string, string> = {
   created_at: 'tasks.created_at',
-  due_at: 'tasks.due_at',
-  name: 'tasks.name',
-  category: 'tasks.category',
+  due_date: 'tasks.due_date',
+  title: 'tasks.title',
   priority: 'tasks.priority',
-  is_completed: 'tasks.is_completed',
+  status: 'tasks.status',
   completed_at: 'tasks.completed_at',
   user_id: 'tasks.user_id',
   username: 'users.username',
 };
-
-function getTaskQueryMainFields(
-  filter: Partial<TaskQueryType>,
-): Partial<TaskType> {
-  let taskQuery: Partial<TaskType> = {};
-  if (filter.name) {
-    taskQuery.name = filter.name;
-  }
-  if (filter.description) {
-    taskQuery.description = filter.description;
-  }
-  if (filter.category) {
-    taskQuery.category = filter.category;
-  }
-  if (filter.completed_at) {
-    taskQuery.completed_at = filter.completed_at;
-  }
-  if (filter.due_at) {
-    taskQuery.due_at = filter.due_at;
-  }
-  if (filter.estimated_duration) {
-    taskQuery.estimated_duration = filter.estimated_duration;
-  }
-  if (filter.actual_duration) {
-    taskQuery.actual_duration = filter.actual_duration;
-  }
-  if (filter.user_id) {
-    taskQuery.user_id = filter.user_id;
-  }
-  if (filter.priority) {
-    taskQuery.priority = filter.priority;
-  }
-  return taskQuery;
-}

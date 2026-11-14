@@ -1,14 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from "@nestjs/typeorm";
-import { Habit } from "../../../typeorm/entities/Habit";
-import { Repository } from "typeorm";
-import { getSummaryExpression } from "../../../utils/helpers";
-import { HabitCreateType, HabitQueryType, HabitSummaryType, HabitType } from "../types";
-import { PaginationAndSort } from "../../../utils/types";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Habit } from '../../../typeorm/entities/Habit';
+import {
+  HabitCreateType,
+  HabitQueryType,
+  HabitSummaryType,
+  HabitUpdateType,
+} from '../types';
+import { PaginationAndSort } from '../../../utils/types';
+import { getOffset, getSummaryExpression } from '../../../utils/helpers';
 
 @Injectable()
 export class HabitsService {
-  constructor(@InjectRepository(Habit) private habitRepository: Repository<Habit>) {}
+  constructor(
+    @InjectRepository(Habit) private habitRepository: Repository<Habit>,
+  ) {}
+
   findHabit(id: string) {
     return this.habitRepository.findOne({
       where: {
@@ -16,37 +24,56 @@ export class HabitsService {
       },
     });
   }
+
   findHabits(filter: HabitQueryType, pagination: PaginationAndSort) {
     let query = this.habitRepository.createQueryBuilder('habits');
     if (filter.search) {
       query = query.where(
-        'habits.name LIKE :search OR habits.description LIKE :search',
+        '(habits.title LIKE :search OR habits.notes LIKE :search)',
         {
           search: `%${filter.search}%`,
         },
       );
     }
+    if (filter.user_id) {
+      query = query.andWhere('habits.user_id = :user_id', {
+        user_id: filter.user_id,
+      });
+    }
+    if (filter.polarity) {
+      query = query.andWhere('habits.polarity = :polarity', {
+        polarity: filter.polarity,
+      });
+    }
     if (filter.date_lte) {
-      query = query.andWhere('habits.date <= :date_lte', {
+      query = query.andWhere('habits.created_at <= :date_lte', {
         date_lte: filter.date_lte,
       });
     }
     if (filter.date_gte) {
-      query = query.andWhere('habits.date >= :date_gte', {
+      query = query.andWhere('habits.created_at >= :date_gte', {
         date_gte: filter.date_gte,
       });
     }
-    const whereFields = getQueryField(filter);
-    if (Object.keys(whereFields).length > 0) {
-      query = query.andWhere(whereFields);
+    if (filter.archived === true) {
+      query = query.andWhere('habits.archived_at IS NOT NULL');
+    } else {
+      query = query.andWhere('habits.archived_at IS NULL');
     }
     return query
-      .skip(pagination.page * pagination.per_page)
+      .skip(getOffset(pagination.page, pagination.per_page))
       .take(pagination.per_page)
-      .orderBy(pagination.sort_by, pagination.sort_direction)
+      .orderBy(
+        `habits.${pagination.sort_by || 'created_at'}`,
+        pagination.sort_direction || 'DESC',
+      )
       .getMany();
   }
-  getHabitSummary(filter: HabitQueryType, pagination: PaginationAndSort): Promise<HabitSummaryType[]> {
+
+  getHabitSummary(
+    filter: HabitQueryType,
+    pagination: PaginationAndSort,
+  ): Promise<HabitSummaryType[]> {
     const groupExpr = getSummaryExpression({
       GroupBy: filter.group_by!,
       DateGroup: filter.date_group!,
@@ -54,29 +81,18 @@ export class HabitsService {
       AllowedGrouping: habitSummaryGroups,
     });
     let query = this.habitRepository.createQueryBuilder('habits');
+    if (filter.user_id) {
+      query = query.andWhere('habits.user_id = :user_id', {
+        user_id: filter.user_id,
+      });
+    }
     if (filter.search) {
-      query = query.where(
-        'habits.name LIKE :search OR habits.description LIKE :search',
-        {
-          search: `%${filter.search}%`,
-        },
+      query = query.andWhere(
+        '(habits.title LIKE :search OR habits.notes LIKE :search)',
+        { search: `%${filter.search}%` },
       );
     }
-    if (filter.date_lte) {
-      query = query.andWhere('habits.date <= :date_lte', {
-        date_lte: filter.date_lte,
-      });
-    }
-    if (filter.date_gte) {
-      query = query.andWhere('habits.date >= :date_gte', {
-        date_gte: filter.date_gte,
-      });
-    }
-    const whereFields = getQueryField(filter);
-    if (Object.keys(whereFields).length > 0) {
-      query = query.andWhere(whereFields);
-    }
-    if (filter.group_by?.startsWith('users.')) {
+    if (groupExpr.startsWith('users.')) {
       query = query.innerJoin('users', 'users', 'habits.user_id = users.id');
     }
     return query
@@ -84,69 +100,50 @@ export class HabitsService {
         `
         ${groupExpr} as label,
         COUNT(habits.id) as count,
-        SUM(habits.is_positive) as positive_count,
-        SUM(habits.is_positive = 0) as negative_count,
-        MAX(habits.date) as last_habit_date
+        SUM(habits.polarity = 'positive') as positive_count,
+        SUM(habits.polarity = 'negative') as negative_count,
+        SUM(habits.target_per_day) as target_total
       `,
       )
       .groupBy(groupExpr)
-      .skip(pagination.page * pagination.per_page)
+      .skip(getOffset(pagination.page, pagination.per_page))
       .take(pagination.per_page)
       .getRawMany();
   }
-  createHabit(habit: Omit<HabitCreateType, "id">) {
-    const createdHabit = this.habitRepository.create(habit);
+
+  createHabit(habit: HabitCreateType) {
+    const payload = {
+      ...habit,
+      frequency_kind: habit.frequency_kind ?? 'daily',
+      start_date: habit.start_date ?? new Date().toISOString().slice(0, 10),
+      target_per_day: habit.target_per_day ?? 1,
+      polarity: habit.polarity ?? 'positive',
+    };
+    const createdHabit = this.habitRepository.create(payload);
     return this.habitRepository.save(createdHabit);
   }
-  async updateHabit(id: string, habit: Partial<HabitType>) {
-    await this.habitRepository.update(id, habit);
-    return this.habitRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
+
+  async updateHabit(id: string, habit: HabitUpdateType) {
+    const { archived, ...rest } = habit as HabitUpdateType & { archived?: boolean };
+    await this.habitRepository.update(id, rest);
+    if (archived !== undefined) {
+      await this.habitRepository.update(id, {
+        archived_at: archived ? new Date() : null,
+      });
+    }
+    return this.findHabit(id);
   }
+
   deleteHabit(id: string) {
-    return this.habitRepository.delete(id);
+    return this.habitRepository.update(id, { archived_at: new Date() });
   }
-}
-
-
-function getQueryField(filter: Partial<HabitQueryType>): Partial<HabitType> {
-  let habitQuery: Partial<HabitType> = {};
-  if (filter.name) {
-    habitQuery.name = filter.name;
-  }
-  if (filter.description) {
-    habitQuery.description = filter.description;
-  }
-  if (filter.category) {
-    habitQuery.category = filter.category;
-  }
-  if (filter.pros) {
-    habitQuery.pros = filter.pros;
-  }
-  if (filter.cons) {
-    habitQuery.cons = filter.cons;
-  }
-  if (filter.is_positive) {
-    habitQuery.is_positive = filter.is_positive;
-  }
-  if (filter.last_done) {
-    habitQuery.last_done = filter.last_done;
-  }
-  return habitQuery;
 }
 
 const habitSummaryGroups: Record<string, string> = {
   created_at: 'habits.created_at',
-  date: 'habits.date',
-  name: 'habits.name',
-  category: 'habits.category',
-  pros: 'habits.pros',
-  cons: 'habits.cons',
-  is_positive: 'habits.is_positive',
-  last_done: 'habits.last_done',
+  start_date: 'habits.start_date',
+  title: 'habits.title',
+  polarity: 'habits.polarity',
   user_id: 'habits.user_id',
   username: 'users.username',
 };

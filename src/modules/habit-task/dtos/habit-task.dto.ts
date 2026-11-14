@@ -1,15 +1,17 @@
 import { Type } from "class-transformer";
 import { IsDate, IsOptional, IsString } from "class-validator";
 
-
 export class HabitTaskDTO {
-  id: number;
-  name: string;
-  description: string;
-  category: string;
+  id: string;
+  type: "habit" | "task";
+  title: string;
+  notes: string;
+  icon: string;
+  color: string;
   status: string;
   progress: number;
-  streak?: number;
+  target: number;
+  streak?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +30,10 @@ export class HabitTaskFilterDTO {
   @IsOptional()
   @IsString()
   user_id: string;
+
+  @IsOptional()
+  @IsString()
+  type?: string;
 
   @IsOptional()
   @IsString()

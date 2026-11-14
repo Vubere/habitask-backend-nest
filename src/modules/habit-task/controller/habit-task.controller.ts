@@ -23,6 +23,7 @@ export class HabitTaskController {
       const data = await this.habitTaskService.getHabitTaskDisplayDetails(
         query,
         pagination,
+        query.search,
       );
       res.status(200).json({
         data,

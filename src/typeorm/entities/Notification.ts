@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
 import { User } from "./User";
 
-export const NotificationSourceEnum = ['habit', 'habit-action', 'task', 'task_step'] as const;
+export const NotificationSourceEnum = ['habit', 'task'] as const;
 
 @Entity({
   name: 'notifications',

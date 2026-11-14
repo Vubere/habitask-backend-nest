@@ -1,34 +1,55 @@
 import { Type } from "class-transformer";
-import { IsBoolean, IsDate, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsInt, IsOptional, IsString } from "class-validator";
 
 export class HabitUpdateDto {
-   @IsOptional()
-   @IsString()
-   name: string;
+  @IsOptional()
+  @IsString()
+  title?: string;
 
-   @IsOptional()
-   @IsString()
-   description: string;
-   
-   @IsOptional()
-   @IsString()
-   category: string;
+  @IsOptional()
+  @IsString()
+  notes?: string;
 
-   @IsOptional()
-   @IsString()
-   pros: string;
+  @IsOptional()
+  @IsString()
+  icon?: string;
 
-   @IsOptional()
-   @IsString()
-   cons: string;
+  @IsOptional()
+  @IsString()
+  color?: string;
 
-   @IsOptional()
-   @Type(()=>Boolean)
-   @IsBoolean()
-   is_positive?: boolean;
+  @IsOptional()
+  @IsString()
+  frequency_kind?: "daily" | "weekdays" | "timesPerWeek";
 
-   @IsOptional()
-   @Type(()=>Date)
-   @IsDate()
-   last_done?: string
+  @IsOptional()
+  @IsString()
+  frequency_days?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  frequency_count?: number;
+
+  @IsOptional()
+  @IsString()
+  start_date?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  target_per_day?: number;
+
+  @IsOptional()
+  @IsString()
+  reminder_time?: string;
+
+  @IsOptional()
+  @IsString()
+  polarity?: "positive" | "negative";
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  archived?: boolean;
 }

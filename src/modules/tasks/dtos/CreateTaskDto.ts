@@ -1,35 +1,39 @@
-import { Type } from "class-transformer";
-import { IsDate, IsOptional, IsString } from "class-validator";
-
+import { IsArray, IsOptional, IsString } from 'class-validator';
+import { Subtask } from '../types';
 
 export class CreateTaskDto {
-  @IsOptional()
   @IsString()
-  name: string;
-  
-  @IsOptional()
-  @IsString()
-  description: string;
+  title: string;
 
   @IsOptional()
   @IsString()
-  category: string;
+  notes?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  due_at: string;
+  @IsString()
+  icon?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  completed_at: string;
+  @IsString()
+  color?: string;
 
   @IsOptional()
-  @Type(() => Number)
-  estimated_duration: number;
+  @IsString()
+  status?: "todo" | "done";
 
   @IsOptional()
-  @Type(() => Number)
-  actual_duration: number;
+  @IsString()
+  due_date?: string;
+
+  @IsOptional()
+  @IsString()
+  due_time?: string;
+
+  @IsOptional()
+  @IsString()
+  priority?: string;
+
+  @IsOptional()
+  @IsArray()
+  subtasks?: Subtask[];
 }

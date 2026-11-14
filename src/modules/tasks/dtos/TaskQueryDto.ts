@@ -1,12 +1,6 @@
 import { Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  IsDate,
-} from 'class-validator';
-import { TaskDto } from "./TaskDto";
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { TaskDto } from './TaskDto';
 
 export class TaskQueryDto extends TaskDto {
   @IsOptional()
@@ -14,44 +8,12 @@ export class TaskQueryDto extends TaskDto {
   search?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  completed_at_lte?: Date;
+  @IsString()
+  date_lte?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  completed_at_gte?: Date;
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  due_at_lte?: Date;
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  due_at_gte?: Date;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  estimated_duration_lte?: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  estimated_duration_gte?: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  actual_duration_lte?: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  actual_duration_gte?: number;
+  @IsString()
+  date_gte?: string;
 
   @IsOptional()
   @IsString()
@@ -60,4 +22,9 @@ export class TaskQueryDto extends TaskDto {
   @IsOptional()
   @IsString()
   date_group?: string;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  archived?: boolean;
 }
